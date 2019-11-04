@@ -1,4 +1,4 @@
-package id.co.kudoo_app_kotlin.main
+package id.co.kudoo_app_kotlin.view.main
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.*

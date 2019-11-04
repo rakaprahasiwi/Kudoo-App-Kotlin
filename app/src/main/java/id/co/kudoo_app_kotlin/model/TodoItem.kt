@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "todos")
 data class TodoItem(val title: String) {
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    var id: Long = 0  // 0 is considered not set by Room
 }

@@ -7,28 +7,31 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import id.co.kudoo_app_kotlin.model.TodoItem
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 
-import kotlinx.coroutines.newSingleThreadContext
+val DB = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-val DB = newSingleThreadContext("DB") //coroutineContext for DB operations
 val dbScope = CoroutineScope(DB)
 
 @Database(entities = [TodoItem::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    companion object{
+    companion object {
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(ctx: Context): AppDatabase{
-            if (INSTANCE == null){
+        fun getDatabase(ctx: Context): AppDatabase {
+            if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(ctx, AppDatabase::class.java, "AppDatabase")
+                    .addCallback(prepopulateCallback(ctx))
                     .build()
             }
+
             return INSTANCE!!
         }
 
-        private fun prepopulateCallback(ctx: Context): Callback{
-            return object : Callback(){
+        private fun prepopulateCallback(ctx: Context): Callback {
+            return object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     populateWithSampleData(ctx)
@@ -37,11 +40,12 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun populateWithSampleData(ctx: Context) {
-            dbScope.launch(DB) {
-                with(getDatabase(ctx).todoItemDao()){
-                    insertTodo(TodoItem("Create entitiy"))
+            dbScope.launch {
+                // DB operations must be done on a background thread
+                with(getDatabase(ctx).todoItemDao()) {
+                    insertTodo(TodoItem("Create entity"))
                     insertTodo(TodoItem("Add a DAO for data access"))
-                    insertTodo(TodoItem("inherit from RoomDatabase"))
+                    insertTodo(TodoItem("Inherit from RoomDatabase"))
                 }
             }
         }
