@@ -1,12 +1,11 @@
-package id.co.kudoo_app_kotlin.view
+package id.co.kudoo_app_kotlin.main
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import android.view.*
 import id.co.kudoo_app_kotlin.R
 import id.co.kudoo_app_kotlin.model.TodoItem
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.todo_item.*
 
 class RecyclerListAdapter(
     private val items: MutableList<TodoItem>

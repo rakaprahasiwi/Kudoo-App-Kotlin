@@ -1,15 +1,13 @@
 package id.co.kudoo_app_kotlin
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import id.co.kudoo_app_kotlin.main.RecyclerListAdapter
 import id.co.kudoo_app_kotlin.model.TodoItem
-import id.co.kudoo_app_kotlin.view.RecyclerListAdapter
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -28,18 +26,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpRecyclerView() = with (recyclerViewTodos) {
-        adapter = id.co.kudoo_app_kotlin.view.RecyclerListAdapter(sampleData())
+    private fun setUpRecyclerView() = with(recyclerViewTodos){
+        adapter = RecyclerListAdapter(sampleData())
         layoutManager = LinearLayoutManager(this@MainActivity)
         itemAnimator = DefaultItemAnimator()
-        addItemDecoration(
-            DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
-        )
+        addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
     }
 
     private fun sampleData() = mutableListOf(
         TodoItem("Implement RecyclerView"),
         TodoItem("Store to-dos in database"),
-        TodoItem("Delete to-dos on click")
+        TodoItem("Detele to-dos on click")
     )
+
 }
