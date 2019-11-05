@@ -7,6 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import id.co.kudoo_app_kotlin.db.dbScope
+import id.co.kudoo_app_kotlin.model.TodoItem
 import id.co.kudoo_app_kotlin.view.add.AddTodoActivity
 import id.co.kudoo_app_kotlin.view.common.getViewModel
 import id.co.kudoo_app_kotlin.view.main.RecyclerListAdapter
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private fun setUpRecyclerView() {
         with(recyclerViewTodos) {
-            adapter = RecyclerListAdapter(mutableListOf())
+            adapter = RecyclerListAdapter(mutableListOf(), onRecylerItemClick())
             layoutManager = LinearLayoutManager(this@MainActivity)
             itemAnimator = DefaultItemAnimator()
             addItemDecoration(
@@ -63,5 +65,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 }
             })
         }
+    }
+
+    private fun onRecylerItemClick(): (TodoItem) -> Unit = { todo ->
+        dbScope.launch { viewModel.delete(todo) }
     }
 }

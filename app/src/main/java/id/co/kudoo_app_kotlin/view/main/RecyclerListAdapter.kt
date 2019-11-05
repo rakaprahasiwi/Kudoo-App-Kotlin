@@ -8,7 +8,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.todo_item.*
 
 class RecyclerListAdapter(
-    private val items: MutableList<TodoItem>
+    private val items: MutableList<TodoItem>,
+    private val onItemCheckBoxClicked: (TodoItem) -> Unit
 ) : RecyclerView.Adapter<RecyclerListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, layoutId: Int): ViewHolder {
@@ -29,13 +30,17 @@ class RecyclerListAdapter(
         notifyDataSetChanged()
     }
 
-    class ViewHolder(
+    inner class ViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bindItem(todoItem: TodoItem) {
             tvTodoTitle.text = todoItem.title
             cbTodoDone.isChecked = false  // To-do items are always 'not done' (or deleted)
+
+            cbTodoDone.setOnCheckedChangeListener { _, _ ->
+                onItemCheckBoxClicked(todoItem)
+            }
         }
     }
 }
