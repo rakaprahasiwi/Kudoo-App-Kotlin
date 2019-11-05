@@ -23,7 +23,7 @@ class RecyclerListAdapter(
         holder.bindItem(items[position])
     }
 
-    fun setItems(items: List<TodoItem>){
+    fun setItems(items: List<TodoItem>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()

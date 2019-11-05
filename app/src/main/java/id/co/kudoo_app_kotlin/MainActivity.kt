@@ -1,20 +1,22 @@
 package id.co.kudoo_app_kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
-import id.co.kudoo_app_kotlin.db.dbScope
-import id.co.kudoo_app_kotlin.model.TodoItem
+import id.co.kudoo_app_kotlin.view.add.AddTodoActivity
 import id.co.kudoo_app_kotlin.view.common.getViewModel
 import id.co.kudoo_app_kotlin.view.main.RecyclerListAdapter
 import id.co.kudoo_app_kotlin.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -32,22 +34,18 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setSupportActionBar(toolbar)
         viewModel = getViewModel(TodoViewModel::class)  // getViewModel is impl. next
         setUpRecyclerView()
+        setUpFloatingActionButton()
+    }
 
-        dbScope.launch {
-            repeat(3) {
-                delay(1000)
-                viewModel.add(TodoItem("Celebrate!"))
-            }
-        }
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+    private fun setUpFloatingActionButton() {
+        fab.setOnClickListener {
+            val intent = Intent(this, AddTodoActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun setUpRecyclerView(){
-        with(recyclerViewTodos){
+    private fun setUpRecyclerView() {
+        with(recyclerViewTodos) {
             adapter = RecyclerListAdapter(mutableListOf())
             layoutManager = LinearLayoutManager(this@MainActivity)
             itemAnimator = DefaultItemAnimator()
