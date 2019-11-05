@@ -2,6 +2,7 @@ package id.co.kudoo_app_kotlin
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,10 +14,7 @@ import id.co.kudoo_app_kotlin.view.main.RecyclerListAdapter
 import id.co.kudoo_app_kotlin.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -36,7 +34,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setUpRecyclerView()
 
         dbScope.launch {
-            viewModel.add(TodoItem("Won't show up automatically yet"))
+            repeat(3) {
+                delay(1000)
+                viewModel.add(TodoItem("Celebrate!"))
+            }
         }
 
         fab.setOnClickListener { view ->
@@ -45,13 +46,24 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun setUpRecyclerView() = with(recyclerViewTodos) {
-        uiScope.launch {
-            adapter = RecyclerListAdapter(viewModel.getTodos())
+    private fun setUpRecyclerView(){
+        with(recyclerViewTodos){
+            adapter = RecyclerListAdapter(mutableListOf())
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            itemAnimator = DefaultItemAnimator()
+            addItemDecoration(
+                DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
+            )
         }
-        layoutManager = LinearLayoutManager(this@MainActivity)
-        itemAnimator = DefaultItemAnimator()
-        addItemDecoration(
-            DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
+
+        uiScope.launch {
+            val todosLiveData = viewModel.getTodos()
+            todosLiveData.observe(this@MainActivity, Observer { todos ->
+                todos?.let {
+                    val adapter = (recyclerViewTodos.adapter as RecyclerListAdapter)
+                    adapter.setItems(it)
+                }
+            })
+        }
     }
 }

@@ -23,6 +23,12 @@ class RecyclerListAdapter(
         holder.bindItem(items[position])
     }
 
+    fun setItems(items: List<TodoItem>){
+        this.items.clear()
+        this.items.addAll(items)
+        notifyDataSetChanged()
+    }
+
     class ViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {

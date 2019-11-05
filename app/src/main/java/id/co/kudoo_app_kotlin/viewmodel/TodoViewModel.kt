@@ -2,6 +2,7 @@ package id.co.kudoo_app_kotlin.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import id.co.kudoo_app_kotlin.db.AppDatabase
 import id.co.kudoo_app_kotlin.db.DB
 import id.co.kudoo_app_kotlin.db.dbScope
@@ -12,8 +13,8 @@ import kotlinx.coroutines.withContext
 class TodoViewModel(app: Application) : AndroidViewModel(app) {
     private val dao by lazy { AppDatabase.getDatabase(getApplication()).todoItemDao() }
 
-    suspend fun getTodos(): MutableList<TodoItem> = withContext(DB) {
-        dao.loadAllTodos().toMutableList()
+    suspend fun getTodos(): LiveData<List<TodoItem>> = withContext(DB) {
+        dao.loadAllTodos()
     }
 
     fun add(todo: TodoItem) = dbScope.launch { dao.insertTodo(todo) }
